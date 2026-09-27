@@ -88,3 +88,7 @@ pio run -t upload
 ## 📜 许可证
 
 PolyForm Noncommercial License 1.0.0 — 仅限非商业用途
+
+## ESP-Mosaico / MicroPixel 移植
+
+ESP-Mosaico 方形触摸屏移植版见 [mosaico/README.md](mosaico/README.md)，使用 MicroPixel Guest SDK 构建，包含四种流体模式和触摸操作。原有 PlatformIO 工程保持独立。
