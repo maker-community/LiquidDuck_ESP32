@@ -1,0 +1,30 @@
+{
+  "schema_version": 1,
+  "app_id": "local.tommy.liquidduck",
+  "version": "0.1.2",
+  "title": "LiquidDuck Mosaico",
+  "threading": "none",
+  "sources": [
+    "src/main.cpp",
+    "src/flip.cpp"
+  ],
+  "requirements": {
+    "schema_version": 1,
+    "display": {
+      "layouts": [
+        "square"
+      ],
+      "min_width": 480,
+      "min_height": 480
+    },
+    "required": [
+      "input.touch",
+      "sensor.acceleration"
+    ],
+    "optional": [
+      "audio.output"
+    ],
+    "any_of": [],
+    "services": {}
+  }
+}
