@@ -393,6 +393,13 @@ static void physicsStepBOTTLE(float dt) {
     }
 }
 
+static int mapParticleToCell(float position, float minBound, float maxBound, int cellCount) {
+    if (cellCount <= 1 || maxBound <= minBound || position <= minBound) return 0;
+    if (position >= maxBound) return cellCount - 1;
+    int cell = int((position - minBound) * float(cellCount) / (maxBound - minBound));
+    return cell < cellCount ? cell : cellCount - 1;
+}
+
 static void renderFrameBOTTLE() {
     uint32_t bg32 = (currentMode == MODE_BOTTLE) ? OCEAN_PALETTE[0] : PIXEL_PALETTES[currentPixelPaletteIndex][0];
     canvas.fillSprite(rgb32to16(bg32));
@@ -409,13 +416,13 @@ static void renderFrameBOTTLE() {
 
             int num = 0; float *pos = nullptr; float *vel = nullptr;
             flip_get_particles(bottleFluid, &num, &pos, &vel);
+            float minX = 0.0f, maxX = 0.0f, minY = 0.0f, maxY = 0.0f;
+            flip_get_particle_bounds(bottleFluid, &minX, &maxX, &minY, &maxY);
 
             if (num > 0 && pos) {
                 for (int i = 0; i < num; i++) {
-                    int gx = (int)(pos[2*i+0] * currentFluidW);
-                    int gy = (int)(pos[2*i+1] * currentFluidW);
-                    if (gx < 0) gx = 0; if (gx >= currentFluidW) gx = currentFluidW - 1;
-                    if (gy < 0) gy = 0; if (gy >= currentFluidH) gy = currentFluidH - 1;
+                    int gx = mapParticleToCell(pos[2*i+0], minX, maxX, currentFluidW);
+                    int gy = mapParticleToCell(pos[2*i+1], minY, maxY, currentFluidH);
 
                     tempGrid[gx * currentFluidH + gy] += 1.0f; // 100% 力量加给它当前所在的唯一单格子
                 }
@@ -500,10 +507,11 @@ static void renderFrameFLIP() {
             ballSprites[0][cIdx].pushSprite(&canvas, (int)(px - pRadius), (int)(py - pRadius), 0x0001);
         }
     }
-    // 渲染旋转的鸭子 (使用 pushRotateZoom，以 x,y 为旋转中心)
+    // 渲染鸭子：有 polygon 路径时用旋转，否则直绘（软件旋转大精灵会卡住 Host）
     float dx = sim_to_screen_x(duck.x);
     float dy = sim_to_screen_y(duck.y);
-    duckSprite.pushRotateZoom(&canvas, dx, dy, duck.angle, 1.0f, 1.0f, 0x0001);
+    if(g_duckRotate)duckSprite.pushRotateZoom(&canvas, dx, dy, duck.angle, 1.0f, 1.0f, 0x0001);
+    else duckSprite.pushSprite(&canvas, int(dx) - duckSprite.width()/2, int(dy) - duckSprite.height()/2, 0x0001);
 
     drawBatteryStatus(&canvas);
 

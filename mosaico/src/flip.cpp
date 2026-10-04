@@ -741,3 +741,13 @@ float flip_get_particle_radius(const FlipFluid* f) {
     if (!f) return 0.0f;
     return f->particle_radius;
 }
+
+void flip_get_particle_bounds(const FlipFluid* f,
+                              float* min_x, float* max_x,
+                              float* min_y, float* max_y) {
+    if (!f) return;
+    if (min_x) *min_x = f->h + f->particle_radius;
+    if (max_x) *max_x = (f->f_num_x - 1) * f->h - f->particle_radius;
+    if (min_y) *min_y = f->h + f->particle_radius;
+    if (max_y) *max_y = (f->f_num_y - 1) * f->h - f->particle_radius;
+}
