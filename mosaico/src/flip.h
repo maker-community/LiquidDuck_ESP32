@@ -35,6 +35,9 @@ void flip_get_particles(const FlipFluid* f, int* out_num, float** out_pos, float
 
 // 获取粒子的碰撞半径
 float flip_get_particle_radius(const FlipFluid* f);
+void flip_get_particle_bounds(const FlipFluid* f,
+                              float* min_x, float* max_x,
+                              float* min_y, float* max_y);
 
 #ifdef __cplusplus
 }

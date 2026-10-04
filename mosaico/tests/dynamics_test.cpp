@@ -2,6 +2,21 @@
 #include <cmath>
 #include "../src/liquidduck.cpp"
 int main(){
+ float minX,maxX,minY,maxY;
+ FlipFluid* pixelFluid=flip_create(1.0f,12.0f/14.0f,14,12,0.45f);
+ assert(pixelFluid);
+ flip_get_particle_bounds(pixelFluid,&minX,&maxX,&minY,&maxY);
+ assert(mapParticleToCell(minX,minX,maxX,14)==0);
+ assert(mapParticleToCell(maxX,minX,maxX,14)==13);
+ assert(mapParticleToCell(minY,minY,maxY,12)==0);
+ assert(mapParticleToCell(maxY,minY,maxY,12)==11);
+ for(int cell=0;cell<14;++cell){
+  float p=minX+(float(cell)+0.5f)*(maxX-minX)/14.0f;
+  float mirror=maxX-(float(cell)+0.5f)*(maxX-minX)/14.0f;
+  assert(mapParticleToCell(p,minX,maxX,14)==cell);
+  assert(mapParticleToCell(mirror,minX,maxX,14)==13-cell);
+ }
+ flip_destroy(pixelFluid);
  for(int angle=0;angle<360;angle+=5){
   duck.angle=angle;imuGX=imuGY=0;
   clouds[0]={-100,-100,-10,-10,24};clouds[1]={400,400,10,10,15};
